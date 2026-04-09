@@ -1,6 +1,9 @@
 import { useState } from 'react';
-import { Users, Plus, Trash2, Eye, EyeOff, Key, Lock } from 'lucide-react';
+import { Users, Plus, Trash2, Key, Lock } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { hashPassword } from '../../utils/crypto';
+
+const MIN_PASSWORD_LENGTH = 6;
 
 function generateId() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2);
@@ -11,12 +14,11 @@ export default function PatientManager() {
   const [accounts, setAccounts] = useState(() =>
     JSON.parse(localStorage.getItem('diet-patient-accounts') || '[]')
   );
-  const [form, setForm] = useState({ username: '', password: '' });
-  const [showPasswords, setShowPasswords] = useState({});
-  const [error, setError] = useState('');
+  const [form, setForm]       = useState({ username: '', password: '' });
+  const [error, setError]     = useState('');
   const [success, setSuccess] = useState('');
-  const [adminPwForm, setAdminPwForm] = useState({ current: '', next: '', confirm: '' });
-  const [adminPwError, setAdminPwError] = useState('');
+  const [adminPwForm, setAdminPwForm]     = useState({ current: '', next: '', confirm: '' });
+  const [adminPwError, setAdminPwError]   = useState('');
   const [adminPwSuccess, setAdminPwSuccess] = useState('');
 
   const saveAccounts = (updated) => {
@@ -24,18 +26,23 @@ export default function PatientManager() {
     localStorage.setItem('diet-patient-accounts', JSON.stringify(updated));
   };
 
-  const addAccount = (e) => {
+  const addAccount = async (e) => {
     e.preventDefault();
     setError('');
     if (!form.username.trim() || !form.password.trim()) {
       setError('Username e password sono obbligatori.');
       return;
     }
+    if (form.password.length < MIN_PASSWORD_LENGTH) {
+      setError(`La password deve avere almeno ${MIN_PASSWORD_LENGTH} caratteri.`);
+      return;
+    }
     if (accounts.find(a => a.username === form.username.trim())) {
       setError('Username già in uso.');
       return;
     }
-    const newAccount = { id: generateId(), username: form.username.trim(), password: form.password.trim() };
+    const passwordHash = await hashPassword(form.password.trim());
+    const newAccount   = { id: generateId(), username: form.username.trim(), passwordHash };
     saveAccounts([...accounts, newAccount]);
     setForm({ username: '', password: '' });
     setSuccess('Account creato con successo!');
@@ -44,36 +51,31 @@ export default function PatientManager() {
 
   const deleteAccount = (id) => {
     if (!window.confirm('Sei sicuro di voler eliminare questo account? Tutti i dati del paziente saranno persi.')) return;
-    // Remove patient data
-    const account = accounts.find(a => a.id === id);
-    if (account) {
-      const keysToRemove = Object.keys(localStorage).filter(k => k.startsWith(`diet-patient-${id}-`));
-      keysToRemove.forEach(k => localStorage.removeItem(k));
-    }
+    const keysToRemove = Object.keys(localStorage).filter(k => k.startsWith(`diet-patient-${id}-`));
+    keysToRemove.forEach(k => localStorage.removeItem(k));
     saveAccounts(accounts.filter(a => a.id !== id));
   };
 
-  const toggleShowPassword = (id) => {
-    setShowPasswords(prev => ({ ...prev, [id]: !prev[id] }));
-  };
-
-  const changeAdminPassword = (e) => {
+  const changeAdminPassword = async (e) => {
     e.preventDefault();
     setAdminPwError('');
-    const storedPw = localStorage.getItem('diet-dietitian-password') || 'admin123';
-    if (adminPwForm.current !== storedPw) {
+    const storedHash    = localStorage.getItem('diet-dietitian-password');
+    const currentHashed = await hashPassword(adminPwForm.current);
+    const defaultHash   = await hashPassword('admin123');
+    const isValid       = storedHash ? currentHashed === storedHash : currentHashed === defaultHash;
+    if (!isValid) {
       setAdminPwError('Password attuale non corretta.');
       return;
     }
-    if (adminPwForm.next.length < 4) {
-      setAdminPwError('La nuova password deve avere almeno 4 caratteri.');
+    if (adminPwForm.next.length < MIN_PASSWORD_LENGTH) {
+      setAdminPwError(`La nuova password deve avere almeno ${MIN_PASSWORD_LENGTH} caratteri.`);
       return;
     }
     if (adminPwForm.next !== adminPwForm.confirm) {
       setAdminPwError('Le password non coincidono.');
       return;
     }
-    changeDietitianPassword(adminPwForm.next);
+    await changeDietitianPassword(adminPwForm.next);
     setAdminPwForm({ current: '', next: '', confirm: '' });
     setAdminPwSuccess('Password cambiata con successo!');
     setTimeout(() => setAdminPwSuccess(''), 3000);
@@ -102,8 +104,9 @@ export default function PatientManager() {
             />
           </div>
           <div className="flex-1 min-w-[160px]">
-            <label className="block text-sm text-gray-600 mb-1">Password</label>
+            <label className="block text-sm text-gray-600 mb-1">Password (min. {MIN_PASSWORD_LENGTH} caratteri)</label>
             <input
+              type="password"
               value={form.password}
               onChange={e => setForm(p => ({ ...p, password: e.target.value }))}
               placeholder="Password iniziale"
@@ -117,7 +120,7 @@ export default function PatientManager() {
             <Plus size={14} /> Crea Account
           </button>
         </form>
-        {error && <p className="text-red-500 text-sm mt-3">{error}</p>}
+        {error   && <p className="text-red-500 text-sm mt-3">{error}</p>}
         {success && <p className="text-emerald-600 text-sm mt-3">{success}</p>}
       </div>
 
@@ -138,7 +141,6 @@ export default function PatientManager() {
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Username</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Password</th>
                 <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Profilo</th>
                 <th className="px-6 py-3" />
               </tr>
@@ -149,21 +151,10 @@ export default function PatientManager() {
                 return (
                   <tr key={account.id} className="hover:bg-gray-50/50">
                     <td className="px-6 py-3 text-sm font-medium text-gray-800">{account.username}</td>
-                    <td className="px-6 py-3 text-sm text-gray-600">
-                      <div className="flex items-center gap-2">
-                        <span className="font-mono">
-                          {showPasswords[account.id] ? account.password : '••••••'}
-                        </span>
-                        <button
-                          onClick={() => toggleShowPassword(account.id)}
-                          className="text-gray-400 hover:text-gray-600"
-                        >
-                          {showPasswords[account.id] ? <EyeOff size={14} /> : <Eye size={14} />}
-                        </button>
-                      </div>
-                    </td>
                     <td className="px-6 py-3 text-sm text-gray-500">
-                      {profile ? `${profile.firstName || ''} ${profile.lastName || ''}`.trim() || 'Profilo incompleto' : 'Non ancora configurato'}
+                      {profile
+                        ? `${profile.firstName || ''} ${profile.lastName || ''}`.trim() || 'Profilo incompleto'
+                        : 'Non ancora configurato'}
                     </td>
                     <td className="px-6 py-3 text-right">
                       <button
@@ -214,7 +205,7 @@ export default function PatientManager() {
               className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-300"
             />
           </div>
-          {adminPwError && <p className="text-red-500 text-sm">{adminPwError}</p>}
+          {adminPwError   && <p className="text-red-500 text-sm">{adminPwError}</p>}
           {adminPwSuccess && <p className="text-emerald-600 text-sm">{adminPwSuccess}</p>}
           <button
             type="submit"
@@ -227,3 +218,4 @@ export default function PatientManager() {
     </div>
   );
 }
+

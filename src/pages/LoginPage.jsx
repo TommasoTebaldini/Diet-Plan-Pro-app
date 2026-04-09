@@ -4,20 +4,26 @@ import { User, Lock, Stethoscope, HeartPulse } from 'lucide-react';
 
 export default function LoginPage() {
   const { loginDietitian, loginPatient } = useAuth();
-  const [tab, setTab] = useState('patient'); // 'patient' | 'dietitian'
+  const [tab, setTab]         = useState('patient'); // 'patient' | 'dietitian'
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [error, setError]     = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    if (tab === 'dietitian') {
-      const ok = loginDietitian(password);
-      if (!ok) setError('Password errata.');
-    } else {
-      const ok = loginPatient(username, password);
-      if (!ok) setError('Credenziali non corrette. Contatta il tuo dietista.');
+    setLoading(true);
+    try {
+      if (tab === 'dietitian') {
+        const ok = await loginDietitian(password);
+        if (!ok) setError('Password errata.');
+      } else {
+        const ok = await loginPatient(username, password);
+        if (!ok) setError('Credenziali non corrette. Contatta il tuo dietista.');
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -101,9 +107,10 @@ export default function LoginPage() {
 
             <button
               type="submit"
-              className="w-full py-3 bg-emerald-500 text-white rounded-xl font-semibold text-sm hover:bg-emerald-600 transition-colors shadow-sm"
+              disabled={loading}
+              className="w-full py-3 bg-emerald-500 text-white rounded-xl font-semibold text-sm hover:bg-emerald-600 disabled:opacity-60 transition-colors shadow-sm"
             >
-              Accedi
+              {loading ? 'Accesso in corso...' : 'Accedi'}
             </button>
 
             {tab === 'patient' && (
@@ -119,3 +126,4 @@ export default function LoginPage() {
     </div>
   );
 }
+

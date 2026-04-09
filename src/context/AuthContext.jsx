@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useCallback } from 'react';
+import { hashPassword } from '../utils/crypto';
 
 const AuthContext = createContext(null);
 
@@ -11,20 +12,26 @@ export function AuthProvider({ children }) {
     }
   });
 
-  const loginDietitian = useCallback((password) => {
-    const stored = localStorage.getItem('diet-dietitian-password') || 'admin123';
-    if (password === stored) {
-      const s = { role: 'dietitian', username: 'dietitian' };
-      localStorage.setItem('diet-auth-session', JSON.stringify(s));
-      setSession(s);
-      return true;
+  const loginDietitian = useCallback(async (password) => {
+    const stored = localStorage.getItem('diet-dietitian-password');
+    const hashed = await hashPassword(password);
+    if (!stored) {
+      // First login: bootstrap with default password hash
+      const defaultHash = await hashPassword('admin123');
+      if (hashed !== defaultHash) return false;
+    } else if (hashed !== stored) {
+      return false;
     }
-    return false;
+    const s = { role: 'dietitian', username: 'dietitian' };
+    localStorage.setItem('diet-auth-session', JSON.stringify(s));
+    setSession(s);
+    return true;
   }, []);
 
-  const loginPatient = useCallback((username, password) => {
+  const loginPatient = useCallback(async (username, password) => {
     const accounts = JSON.parse(localStorage.getItem('diet-patient-accounts') || '[]');
-    const account = accounts.find(a => a.username === username && a.password === password);
+    const hashed   = await hashPassword(password);
+    const account  = accounts.find(a => a.username === username && a.passwordHash === hashed);
     if (account) {
       const s = { role: 'patient', username: account.username, patientId: account.id };
       localStorage.setItem('diet-auth-session', JSON.stringify(s));
@@ -39,8 +46,9 @@ export function AuthProvider({ children }) {
     setSession(null);
   }, []);
 
-  const changeDietitianPassword = useCallback((newPassword) => {
-    localStorage.setItem('diet-dietitian-password', newPassword);
+  const changeDietitianPassword = useCallback(async (newPassword) => {
+    const hashed = await hashPassword(newPassword);
+    localStorage.setItem('diet-dietitian-password', hashed);
   }, []);
 
   return (
