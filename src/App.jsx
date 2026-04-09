@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom';
+import { HashRouter, Routes, Route, NavLink } from 'react-router-dom';
 import { LayoutDashboard, CalendarDays, Database, User, TrendingUp } from 'lucide-react';
 import Dashboard from './pages/Dashboard';
 import MealPlanner from './pages/MealPlanner';
@@ -70,7 +70,7 @@ const navItems = [
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <div className="flex min-h-screen bg-gray-50">
         {/* Sidebar */}
         <aside className="w-64 bg-white shadow-lg flex flex-col">
@@ -120,6 +120,6 @@ export default function App() {
           </Routes>
         </main>
       </div>
-    </BrowserRouter>
+    </HashRouter>
   );
 }

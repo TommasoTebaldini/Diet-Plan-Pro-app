@@ -1,6 +1,8 @@
 # Diet Plan Pro
 
-A comprehensive diet planning web application built with React + Vite.
+A cross-platform **desktop application** for tracking your daily nutrition, planning weekly meals, and monitoring your weight progress.
+
+Built with **React 18 + Vite** inside **Electron**, packaged as a native installer for Windows, macOS, and Linux.
 
 ## Features
 
@@ -10,25 +12,36 @@ A comprehensive diet planning web application built with React + Vite.
 - **My Profile** – Personal details, activity level, weight goals, and automatic TDEE calculation via Mifflin-St Jeor
 - **Progress Tracker** – Log weight entries, view a bar chart of recent progress, and track total weight change
 
+All data is stored locally on your machine — no internet or account required.
+
 ## Tech Stack
 
-- React 18 + Vite
-- React Router DOM
-- Tailwind CSS
-- Lucide React (icons)
-- localStorage for persistence (no backend required)
+- **Electron 39** — desktop shell
+- **React 18 + Vite** — UI framework
+- **Tailwind CSS** — styling (emerald/teal theme)
+- **React Router** (HashRouter) — client-side routing
+- **Lucide React** — icons
+- **electron-builder** — cross-platform packaging
 
-## Getting Started
+## Development
 
 ```bash
 npm install
-npm run dev
-```
 
-Open [http://localhost:5173](http://localhost:5173) in your browser.
+# Run in development (Vite dev server + Electron window)
+npm run electron:dev
 
-## Build
-
-```bash
+# Build web assets only
 npm run build
 ```
+
+## Build Installers
+
+```bash
+npm run electron:build
+```
+
+Outputs are placed in the `release/` folder:
+- **Windows** → `.exe` installer (NSIS)
+- **macOS** → `.dmg`
+- **Linux** → `.AppImage`
