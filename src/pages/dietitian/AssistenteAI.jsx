@@ -73,9 +73,14 @@ export default function AssistenteAI() {
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header card */}
         <div className="px-4 pt-4 pb-0">
-          <div className="rounded-xl mb-3 p-4" style={HEADER_BG}>
-            <h1 className="text-white font-bold">Assistente AI Nutrizionale</h1>
-            <p className="text-teal-100 text-sm mt-0.5">Supporto clinico basato su linee guida nutrizionali. Demo — non per uso diagnostico.</p>
+          <div className="rounded-xl mb-4 p-5" style={HEADER_BG}>
+            <div className="flex items-start gap-4">
+              <span className="text-5xl" style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' }}>🤖</span>
+              <div>
+                <h1 className="text-white font-bold text-lg">Assistente AI Nutrizionale</h1>
+                <p className="text-teal-100 text-sm mt-0.5">Supporto clinico basato su linee guida nutrizionali. Demo — non per uso diagnostico.</p>
+              </div>
+            </div>
           </div>
         </div>
 

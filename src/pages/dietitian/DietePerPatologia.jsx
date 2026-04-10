@@ -83,8 +83,13 @@ export default function DietePerPatologia() {
 
       <div className="flex-1 overflow-y-auto p-4">
         <div className="rounded-xl mb-4 p-5" style={HEADER_BG}>
-          <h1 className="text-white font-bold text-lg">Diete per Patologia</h1>
-          <p className="text-teal-100 text-sm mt-0.5">Schede di riferimento rapido per le principali patologie nutrizionali</p>
+          <div className="flex items-start gap-4">
+            <span className="text-5xl" style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' }}>🏥</span>
+            <div>
+              <h1 className="text-white font-bold text-lg">Diete per Patologia</h1>
+              <p className="text-teal-100 text-sm mt-0.5">Schede di riferimento rapido per le principali patologie nutrizionali</p>
+            </div>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
