@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { foods } from '../../data/foods';
-import { Plus, X, Search } from 'lucide-react';
+import { Plus, X, Search, Star } from 'lucide-react';
 
 const DAYS  = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 const SLOTS = ['breakfast', 'lunch', 'dinner', 'snacks'];
