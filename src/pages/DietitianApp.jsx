@@ -4,6 +4,7 @@ import {
   Leaf, Droplets, MessageSquare, Baby, UtensilsCrossed,
   BookOpen, UserCheck, BarChart2, Pill, Lightbulb, Zap,
   ClipboardCheck, Microscope, LogOut, Users,
+  Bot, Calendar, GraduationCap, Database as DatabaseIcon, ChefHat,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import PatientManager from './admin/PatientManager';
@@ -44,6 +45,17 @@ const NAV_SECTIONS = [
       { to: '/dietitian/bia',                   icon: Zap,            label: 'BIA'                   },
       { to: '/dietitian/questionari',           icon: ClipboardCheck, label: 'Questionari'           },
       { to: '/dietitian/studi-scientifici',     icon: Microscope,     label: 'Studi Scientifici'     },
+      { to: '/dietitian/assistente-ai',         icon: Bot,            label: 'Assistente AI'         },
+      { to: '/dietitian/agenda',                icon: Calendar,       label: 'Agenda'                },
+      { to: '/dietitian/corsi-ecm',             icon: GraduationCap,  label: 'Corsi ECM'             },
+    ],
+  },
+  {
+    label: 'DATABASE',
+    items: [
+      { to: '/dietitian/alimenti-crea',  icon: DatabaseIcon, label: 'Alimenti CREA+BDA' },
+      { to: '/dietitian/integratori',    icon: Pill,         label: 'Integratori e AFMS' },
+      { to: '/dietitian/ricette',        icon: ChefHat,      label: 'Ricette'            },
     ],
   },
 ];
@@ -137,6 +149,12 @@ export default function DietitianApp() {
           <Route path="bia"                     element={<ComingSoon nome="BIA" />} />
           <Route path="questionari"             element={<ComingSoon nome="Questionari" />} />
           <Route path="studi-scientifici"       element={<ComingSoon nome="Studi Scientifici" />} />
+          <Route path="assistente-ai"           element={<ComingSoon nome="Assistente AI" />} />
+          <Route path="agenda"                  element={<ComingSoon nome="Agenda" />} />
+          <Route path="corsi-ecm"               element={<ComingSoon nome="Corsi ECM" />} />
+          <Route path="alimenti-crea"           element={<ComingSoon nome="Alimenti CREA+BDA" />} />
+          <Route path="integratori"             element={<ComingSoon nome="Integratori e AFMS" />} />
+          <Route path="ricette"                 element={<ComingSoon nome="Ricette" />} />
           <Route path="*"                       element={<Navigate to="/dietitian/piano-alimentare" replace />} />
         </Routes>
       </main>
