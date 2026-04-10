@@ -51,8 +51,8 @@ export default function PatientApp() {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-      {/* Sidebar */}
-      <aside className="w-64 bg-white shadow-lg flex flex-col">
+      {/* Sidebar – desktop only */}
+      <aside className="hidden md:flex w-64 bg-white shadow-lg flex-col">
         <div className="p-6 border-b border-gray-100">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center">
@@ -101,7 +101,7 @@ export default function PatientApp() {
       </aside>
 
       {/* Main content */}
-      <main className="flex-1 overflow-auto">
+      <main className="flex-1 overflow-auto pb-16 md:pb-0">
         <Routes>
           <Route path="/patient"                element={<PatientDashboard   patientId={patientId} profile={profile} />} />
           <Route path="/patient/diary"          element={<PatientFoodDiary   patientId={patientId} profile={profile} />} />
@@ -113,6 +113,32 @@ export default function PatientApp() {
           <Route path="/patient/progress"       element={<PatientProgress    patientId={patientId} profile={profile} />} />
         </Routes>
       </main>
+
+      {/* Bottom navigation – mobile only */}
+      <nav className="fixed bottom-0 inset-x-0 z-30 bg-white border-t border-gray-200 flex md:hidden">
+        {navItems.map(({ to, icon: Icon, label }) => (
+          <NavLink
+            key={to}
+            to={to}
+            end={to === '/patient'}
+            className={({ isActive }) =>
+              `flex-1 flex flex-col items-center justify-center py-2 text-[10px] font-medium transition-colors ${
+                isActive ? 'text-emerald-600' : 'text-gray-400'
+              }`
+            }
+          >
+            <Icon size={20} />
+            <span className="mt-0.5 leading-tight text-center">{label}</span>
+          </NavLink>
+        ))}
+        <button
+          onClick={logout}
+          className="flex-1 flex flex-col items-center justify-center py-2 text-[10px] font-medium text-gray-400 hover:text-red-500 transition-colors"
+        >
+          <LogOut size={20} />
+          <span className="mt-0.5">Esci</span>
+        </button>
+      </nav>
     </div>
   );
 }
