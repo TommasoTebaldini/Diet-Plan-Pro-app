@@ -1,13 +1,6 @@
 import { useState } from 'react';
 import { Routes, Route, NavLink, Navigate } from 'react-router-dom';
-import {
-  ClipboardList, FolderOpen, Heart, Activity, Dumbbell, Brain,
-  Leaf, Droplets, MessageSquare, Baby, UtensilsCrossed,
-  BookOpen, UserCheck, BarChart2, Pill, Lightbulb, Zap,
-  ClipboardCheck, Microscope, LogOut, Users,
-  Bot, Calendar, GraduationCap, Database as DatabaseIcon, ChefHat,
-  Menu, X,
-} from 'lucide-react';
+import { LogOut, Menu, X } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import PatientManager from './admin/PatientManager';
 import PianoAlimentare from './dietitian/PianoAlimentare';
@@ -36,51 +29,50 @@ import AlimentiCREA from './dietitian/AlimentiCREA';
 import Integratori from './dietitian/Integratori';
 import Ricette from './dietitian/Ricette';
 
-// ─── Sidebar nav structure ───────────────────────────────────────────────────
 const NAV_SECTIONS = [
   {
     label: 'PIANO',
     items: [
-      { to: '/dietitian/piano-alimentare',  icon: ClipboardList,   label: 'Piano Alimentare'   },
-      { to: '/dietitian/cartelle-pazienti', icon: FolderOpen,      label: 'Cartelle Pazienti'  },
+      { to: '/dietitian/piano-alimentare',  emoji: '📋', label: 'Piano Alimentare'   },
+      { to: '/dietitian/cartelle-pazienti', emoji: '📁', label: 'Cartelle Pazienti'  },
     ],
   },
   {
     label: 'SPECIALISTICA',
     items: [
-      { to: '/dietitian/gestione-diabete',        icon: Heart,          label: 'Gestione Diabete'        },
-      { to: '/dietitian/insuff-pancreatica',       icon: Activity,       label: 'Insuff. Pancreatica'     },
-      { to: '/dietitian/nutrizione-sportiva',      icon: Dumbbell,       label: 'Nutrizione Sportiva'     },
-      { to: '/dietitian/dca',                      icon: Brain,          label: 'DCA'                     },
-      { to: '/dietitian/dieta-chetogenica',        icon: Leaf,           label: 'Dieta Chetogenica'       },
-      { to: '/dietitian/nefropatia-irc',           icon: Droplets,       label: 'Nefropatia / IRC'        },
-      { to: '/dietitian/disfagia',                 icon: MessageSquare,  label: 'Disfagia'                },
-      { to: '/dietitian/pediatria',                icon: Baby,           label: 'Pediatria'               },
-      { to: '/dietitian/ristorazione-collettiva',  icon: UtensilsCrossed,label: 'Ristorazione Collettiva' },
+      { to: '/dietitian/gestione-diabete',        emoji: '🩸', label: 'Gestione Diabete'        },
+      { to: '/dietitian/insuff-pancreatica',       emoji: '🫀', label: 'Insuff. Pancreatica'     },
+      { to: '/dietitian/nutrizione-sportiva',      emoji: '🏃', label: 'Nutrizione Sportiva'     },
+      { to: '/dietitian/dca',                      emoji: '🧠', label: 'DCA'                     },
+      { to: '/dietitian/dieta-chetogenica',        emoji: '🥑', label: 'Dieta Chetogenica'       },
+      { to: '/dietitian/nefropatia-irc',           emoji: '💧', label: 'Nefropatia / IRC'        },
+      { to: '/dietitian/disfagia',                 emoji: '💬', label: 'Disfagia'                },
+      { to: '/dietitian/pediatria',                emoji: '👶', label: 'Pediatria'               },
+      { to: '/dietitian/ristorazione-collettiva',  emoji: '🍴', label: 'Ristorazione Collettiva' },
     ],
   },
   {
     label: 'STRUMENTI',
     items: [
-      { to: '/dietitian/linee-guida',           icon: BookOpen,       label: 'Linee Guida'           },
-      { to: '/dietitian/valutazione-paziente',  icon: UserCheck,      label: 'Valutazione Paziente'  },
-      { to: '/dietitian/ncpt',                  icon: BarChart2,      label: 'NCPt'                  },
-      { to: '/dietitian/diete-per-patologia',   icon: Pill,           label: 'Diete per Patologia'   },
-      { to: '/dietitian/consigli-nutrizionali', icon: Lightbulb,      label: 'Consigli Nutrizionali' },
-      { to: '/dietitian/bia',                   icon: Zap,            label: 'BIA'                   },
-      { to: '/dietitian/questionari',           icon: ClipboardCheck, label: 'Questionari'           },
-      { to: '/dietitian/studi-scientifici',     icon: Microscope,     label: 'Studi Scientifici'     },
-      { to: '/dietitian/assistente-ai',         icon: Bot,            label: 'Assistente AI'         },
-      { to: '/dietitian/agenda',                icon: Calendar,       label: 'Agenda'                },
-      { to: '/dietitian/corsi-ecm',             icon: GraduationCap,  label: 'Corsi ECM'             },
+      { to: '/dietitian/linee-guida',           emoji: '📖', label: 'Linee Guida'           },
+      { to: '/dietitian/valutazione-paziente',  emoji: '👤', label: 'Valutazione Paziente'  },
+      { to: '/dietitian/ncpt',                  emoji: '📊', label: 'NCPt'                  },
+      { to: '/dietitian/diete-per-patologia',   emoji: '🍽️', label: 'Diete per Patologia'   },
+      { to: '/dietitian/consigli-nutrizionali', emoji: '💡', label: 'Consigli Nutrizionali' },
+      { to: '/dietitian/bia',                   emoji: '⚡', label: 'BIA'                   },
+      { to: '/dietitian/questionari',           emoji: '📝', label: 'Questionari'           },
+      { to: '/dietitian/studi-scientifici',     emoji: '🔬', label: 'Studi Scientifici'     },
+      { to: '/dietitian/assistente-ai',         emoji: '🤖', label: 'Assistente AI'         },
+      { to: '/dietitian/agenda',                emoji: '📅', label: 'Agenda'                },
+      { to: '/dietitian/corsi-ecm',             emoji: '🎓', label: 'Corsi ECM'             },
     ],
   },
   {
     label: 'DATABASE',
     items: [
-      { to: '/dietitian/alimenti-crea',  icon: DatabaseIcon, label: 'Alimenti CREA+BDA' },
-      { to: '/dietitian/integratori',    icon: Pill,         label: 'Integratori e AFMS' },
-      { to: '/dietitian/ricette',        icon: ChefHat,      label: 'Ricette'            },
+      { to: '/dietitian/alimenti-crea',  emoji: '🗄️', label: 'Alimenti CREA+BDA' },
+      { to: '/dietitian/integratori',    emoji: '💊', label: 'Integratori e AFMS' },
+      { to: '/dietitian/ricette',        emoji: '🧑‍🍳', label: 'Ricette'            },
     ],
   },
 ];
@@ -106,7 +98,7 @@ function SidebarContent({ onNavClick, logout }) {
             <p className="px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-gray-500">
               {section.label}
             </p>
-            {section.items.map(({ to, icon: Icon, label }) => (
+            {section.items.map(({ to, emoji, label }) => (
               <NavLink
                 key={to}
                 to={to}
@@ -119,7 +111,7 @@ function SidebarContent({ onNavClick, logout }) {
                   }`
                 }
               >
-                <Icon size={15} className="flex-shrink-0" />
+                <span className="flex-shrink-0 text-sm leading-none">{emoji}</span>
                 <span className="truncate">{label}</span>
               </NavLink>
             ))}
