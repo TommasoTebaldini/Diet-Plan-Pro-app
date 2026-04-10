@@ -10,6 +10,29 @@ import { useAuth } from '../context/AuthContext';
 import PatientManager from './admin/PatientManager';
 import PianoAlimentare from './dietitian/PianoAlimentare';
 import ComingSoon from './dietitian/ComingSoon';
+import GestioneDiabete from './dietitian/GestioneDiabete';
+import InsuffPancreatica from './dietitian/InsuffPancreatica';
+import NutrioneSportiva from './dietitian/NutrioneSportiva';
+import DCA from './dietitian/DCA';
+import DietaChetogenica from './dietitian/DietaChetogenica';
+import Nefropatia from './dietitian/Nefropatia';
+import Disfagia from './dietitian/Disfagia';
+import Pediatria from './dietitian/Pediatria';
+import RistorazioneCollettiva from './dietitian/RistorazioneCollettiva';
+import LineeGuida from './dietitian/LineeGuida';
+import ValutazionePaziente from './dietitian/ValutazionePaziente';
+import NCPt from './dietitian/NCPt';
+import DietePerPatologia from './dietitian/DietePerPatologia';
+import ConsiglioNutrizionali from './dietitian/ConsiglioNutrizionali';
+import BIA from './dietitian/BIA';
+import Questionari from './dietitian/Questionari';
+import StudiScientifici from './dietitian/StudiScientifici';
+import AssistenteAI from './dietitian/AssistenteAI';
+import Agenda from './dietitian/Agenda';
+import CorsiECM from './dietitian/CorsiECM';
+import AlimentiCREA from './dietitian/AlimentiCREA';
+import Integratori from './dietitian/Integratori';
+import Ricette from './dietitian/Ricette';
 
 // ─── Sidebar nav structure ───────────────────────────────────────────────────
 const NAV_SECTIONS = [
@@ -132,29 +155,29 @@ export default function DietitianApp() {
           <Route index element={<Navigate to="/dietitian/piano-alimentare" replace />} />
           <Route path="piano-alimentare"        element={<PianoAlimentare />} />
           <Route path="cartelle-pazienti"       element={<PatientManager />} />
-          <Route path="gestione-diabete"        element={<ComingSoon nome="Gestione Diabete" />} />
-          <Route path="insuff-pancreatica"      element={<ComingSoon nome="Insufficienza Pancreatica" />} />
-          <Route path="nutrizione-sportiva"     element={<ComingSoon nome="Nutrizione Sportiva" />} />
-          <Route path="dca"                     element={<ComingSoon nome="DCA" />} />
-          <Route path="dieta-chetogenica"       element={<ComingSoon nome="Dieta Chetogenica" />} />
-          <Route path="nefropatia-irc"          element={<ComingSoon nome="Nefropatia / IRC" />} />
-          <Route path="disfagia"                element={<ComingSoon nome="Disfagia" />} />
-          <Route path="pediatria"               element={<ComingSoon nome="Pediatria" />} />
-          <Route path="ristorazione-collettiva" element={<ComingSoon nome="Ristorazione Collettiva" />} />
-          <Route path="linee-guida"             element={<ComingSoon nome="Linee Guida" />} />
-          <Route path="valutazione-paziente"    element={<ComingSoon nome="Valutazione Paziente" />} />
-          <Route path="ncpt"                    element={<ComingSoon nome="NCPt" />} />
-          <Route path="diete-per-patologia"     element={<ComingSoon nome="Diete per Patologia" />} />
-          <Route path="consigli-nutrizionali"   element={<ComingSoon nome="Consigli Nutrizionali" />} />
-          <Route path="bia"                     element={<ComingSoon nome="BIA" />} />
-          <Route path="questionari"             element={<ComingSoon nome="Questionari" />} />
-          <Route path="studi-scientifici"       element={<ComingSoon nome="Studi Scientifici" />} />
-          <Route path="assistente-ai"           element={<ComingSoon nome="Assistente AI" />} />
-          <Route path="agenda"                  element={<ComingSoon nome="Agenda" />} />
-          <Route path="corsi-ecm"               element={<ComingSoon nome="Corsi ECM" />} />
-          <Route path="alimenti-crea"           element={<ComingSoon nome="Alimenti CREA+BDA" />} />
-          <Route path="integratori"             element={<ComingSoon nome="Integratori e AFMS" />} />
-          <Route path="ricette"                 element={<ComingSoon nome="Ricette" />} />
+          <Route path="gestione-diabete"        element={<GestioneDiabete />} />
+          <Route path="insuff-pancreatica"      element={<InsuffPancreatica />} />
+          <Route path="nutrizione-sportiva"     element={<NutrioneSportiva />} />
+          <Route path="dca"                     element={<DCA />} />
+          <Route path="dieta-chetogenica"       element={<DietaChetogenica />} />
+          <Route path="nefropatia-irc"          element={<Nefropatia />} />
+          <Route path="disfagia"                element={<Disfagia />} />
+          <Route path="pediatria"               element={<Pediatria />} />
+          <Route path="ristorazione-collettiva" element={<RistorazioneCollettiva />} />
+          <Route path="linee-guida"             element={<LineeGuida />} />
+          <Route path="valutazione-paziente"    element={<ValutazionePaziente />} />
+          <Route path="ncpt"                    element={<NCPt />} />
+          <Route path="diete-per-patologia"     element={<DietePerPatologia />} />
+          <Route path="consigli-nutrizionali"   element={<ConsiglioNutrizionali />} />
+          <Route path="bia"                     element={<BIA />} />
+          <Route path="questionari"             element={<Questionari />} />
+          <Route path="studi-scientifici"       element={<StudiScientifici />} />
+          <Route path="assistente-ai"           element={<AssistenteAI />} />
+          <Route path="agenda"                  element={<Agenda />} />
+          <Route path="corsi-ecm"               element={<CorsiECM />} />
+          <Route path="alimenti-crea"           element={<AlimentiCREA />} />
+          <Route path="integratori"             element={<Integratori />} />
+          <Route path="ricette"                 element={<Ricette />} />
           <Route path="*"                       element={<Navigate to="/dietitian/piano-alimentare" replace />} />
         </Routes>
       </main>
