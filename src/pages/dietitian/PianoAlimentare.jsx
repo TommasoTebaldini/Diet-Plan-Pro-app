@@ -21,6 +21,7 @@ const MICRONUTRIENTI = ['Calcio (mg)', 'Ferro (mg)', 'Magnesio (mg)', 'Potassio 
 function uid() { return Math.random().toString(36).slice(2, 9); }
 
 function emptyRiga() {
+  // Default quantity of 8g matches the website UI convention (e.g. 1 spoonful)
   return { id: uid(), alimentoId: null, alimentoNome: '', quantita: 8, fonte: '' };
 }
 
@@ -189,7 +190,10 @@ function PastoSection({ pasto, onUpdate, onRemove }) {
         <span className="text-lg">{pasto.emoji}</span>
         <span className="text-white font-semibold text-sm flex-1">{pasto.nome}</span>
         <button
-          onClick={() => {}}
+          onClick={() => {
+            const nuovoNome = window.prompt('Rinomina pasto:', pasto.nome);
+            if (nuovoNome && nuovoNome.trim()) onUpdate({ ...pasto, nome: nuovoNome.trim() });
+          }}
           className="p-1 text-white/70 hover:text-white transition-colors"
           title="Rinomina"
         >
@@ -290,9 +294,14 @@ function PastoSection({ pasto, onUpdate, onRemove }) {
                       <td className="px-2 py-1.5 text-center">
                         <div className="flex items-center gap-1 justify-center">
                           <button
-                            onClick={() => {}}
+                            onClick={() => {
+                              const copy = { ...riga, id: uid() };
+                              const newRighe = [...pasto.righe];
+                              newRighe.splice(idx + 1, 0, copy);
+                              onUpdate({ ...pasto, righe: newRighe });
+                            }}
                             className="text-gray-300 hover:text-gray-500 transition-colors"
-                            title="Copia riga"
+                            title="Duplica riga"
                           >
                             <FileText size={12} />
                           </button>
@@ -405,6 +414,20 @@ export default function PianoAlimentare() {
     setTimeout(() => setSaveMsg(''), 2000);
   };
 
+  const annullaPiano = () => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        const p = JSON.parse(saved);
+        setPiano(p);
+        setPazienteSearch(p.pazienteNome || '');
+        setGiornoAttivo(0);
+      }
+    } catch {
+      // ignore
+    }
+  };
+
   const nuovoPiano = () => {
     if (window.confirm('Creare un nuovo piano? I dati non salvati saranno persi.')) {
       const np = emptyPiano();
@@ -452,7 +475,7 @@ export default function PianoAlimentare() {
     const g = piano.giorni[gIdx];
     const existingTypes = new Set(g.pasti.map(p => p.tipoId));
     const next = PASTI_TEMPLATE.find(t => !existingTypes.has(t.tipoId))
-      || { tipoId: uid(), nome: 'Pasto', colore: '#10b981', emoji: '🍴' };
+      || { tipoId: uid(), nome: 'Pasto Personalizzato', colore: '#10b981', emoji: '🍴' };
     const nuovoPasto = createPasto(next);
     const giorni = piano.giorni.map((gg, gi) =>
       gi !== gIdx ? gg : { ...gg, pasti: [...gg.pasti, nuovoPasto] }
@@ -487,7 +510,7 @@ export default function PianoAlimentare() {
 
         <div className="flex items-center gap-2">
           <button
-            onClick={nuovoPiano}
+            onClick={annullaPiano}
             className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
           >
             <Undo size={13} /> Annulla
