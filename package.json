@@ -2,6 +2,8 @@
   "name": "diet-plan-pro",
   "private": true,
   "version": "1.0.0",
+  "description": "A professional diet planning application for dietitians and patients",
+  "author": "Tommaso Tebaldini",
   "type": "module",
   "main": "electron/main.js",
   "scripts": {
