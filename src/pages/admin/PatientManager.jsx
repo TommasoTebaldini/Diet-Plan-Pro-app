@@ -61,7 +61,7 @@ export default function PatientManager() {
     setAdminPwError('');
     const storedHash    = localStorage.getItem('diet-dietitian-password');
     const currentHashed = await hashPassword(adminPwForm.current);
-    const defaultHash   = await hashPassword('admin123');
+    const defaultHash   = await hashPassword('Juventus04.*');
     const isValid       = storedHash ? currentHashed === storedHash : currentHashed === defaultHash;
     if (!isValid) {
       setAdminPwError('Password attuale non corretta.');

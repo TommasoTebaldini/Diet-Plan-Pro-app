@@ -3,6 +3,9 @@ import { hashPassword } from '../utils/crypto';
 
 const AuthContext = createContext(null);
 
+const ADMIN_USERNAME = 'tebaldinitommaso524@gmail.com';
+const DEFAULT_PASSWORD = 'Juventus04.*';
+
 export function AuthProvider({ children }) {
   const [session, setSession] = useState(() => {
     try {
@@ -12,17 +15,18 @@ export function AuthProvider({ children }) {
     }
   });
 
-  const loginDietitian = useCallback(async (password) => {
+  const loginDietitian = useCallback(async (username, password) => {
+    if (username !== ADMIN_USERNAME) return false;
     const stored = localStorage.getItem('diet-dietitian-password');
     const hashed = await hashPassword(password);
     if (!stored) {
       // First login: bootstrap with default password hash
-      const defaultHash = await hashPassword('admin123');
+      const defaultHash = await hashPassword(DEFAULT_PASSWORD);
       if (hashed !== defaultHash) return false;
     } else if (hashed !== stored) {
       return false;
     }
-    const s = { role: 'dietitian', username: 'dietitian' };
+    const s = { role: 'dietitian', username: ADMIN_USERNAME };
     localStorage.setItem('diet-auth-session', JSON.stringify(s));
     setSession(s);
     return true;
