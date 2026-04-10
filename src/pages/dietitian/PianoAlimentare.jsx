@@ -21,7 +21,8 @@ const EMOJI_PICKS = ['🌅', '🍎', '🍽️', '🍊', '🌙', '🌛', '🥗', 
 function uid() { return Math.random().toString(36).slice(2, 9); }
 
 function emptyRiga() {
-  return { id: uid(), alimentoId: null, alimentoNome: '', quantita: 0, misura: '', fonte: '' };
+  // Default quantity of 8g matches the website UI convention (e.g. 1 spoonful)
+  return { id: uid(), alimentoId: null, alimentoNome: '', quantita: 8, misura: '', fonte: '' };
 }
 
 function getMealColor(nome) {
@@ -700,7 +701,7 @@ export default function PianoAlimentare() {
             🍽️ Pasto
           </button>
           <button
-            onClick={() => showToast('Funzione in sviluppo', 'info')}
+            onClick={() => showToast('Funzione in sviluppo', 'info')} // TODO: implement Excel export
             className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
           >
             <FileSpreadsheet size={13} /> Excel
@@ -713,7 +714,7 @@ export default function PianoAlimentare() {
           </button>
           <span className="text-gray-300 mx-1">|</span>
           <button
-            onClick={() => window.print()}
+            onClick={() => { document.body.removeAttribute('data-print-mode'); window.print(); }}
             className="p-1.5 text-gray-400 hover:text-gray-600 border border-gray-200 rounded-lg transition-colors"
             title="Stampa PDF con calcoli nutrizionali"
           >
@@ -722,14 +723,14 @@ export default function PianoAlimentare() {
           <button
             className="p-1.5 text-gray-400 hover:text-gray-600 border border-gray-200 rounded-lg transition-colors"
             title="Stampa piano senza calcoli"
-            onClick={() => window.print()}
+            onClick={() => { document.body.setAttribute('data-print-mode', 'simple'); window.print(); document.body.removeAttribute('data-print-mode'); }}
           >
             📄
           </button>
           <button
             className="p-1.5 text-gray-400 hover:text-gray-600 border border-gray-200 rounded-lg transition-colors"
             title="Stampa compatta con kcal"
-            onClick={() => window.print()}
+            onClick={() => { document.body.setAttribute('data-print-mode', 'compact'); window.print(); document.body.removeAttribute('data-print-mode'); }}
           >
             📋
           </button>
@@ -847,12 +848,13 @@ export default function PianoAlimentare() {
               <button
                 onClick={() => setGiornoAttivo(idx)}
                 onDoubleClick={() => setModalRenameGiorno({ open: true, idx, nome: g.nome })}
+                onKeyDown={(e) => { if (e.key === 'F2' || (e.key === 'Enter' && idx === giornoAttivo)) setModalRenameGiorno({ open: true, idx, nome: g.nome }); }}
                 className={`px-4 py-1.5 rounded-lg text-sm font-semibold transition-all ${
                   idx === giornoAttivo
                     ? 'bg-teal-700 text-white shadow-sm'
                     : 'bg-white border border-gray-200 text-gray-600 hover:border-teal-400 hover:text-teal-600'
                 }`}
-                title="Doppio click per rinominare"
+                title="Doppio click o F2 per rinominare"
               >
                 {g.nome}
               </button>
