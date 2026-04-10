@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { HashRouter, Routes, Route, NavLink } from 'react-router-dom';
-import { LayoutDashboard, CalendarDays, Database, User, TrendingUp, LogOut, BookOpen, ShoppingCart } from 'lucide-react';
+import { LayoutDashboard, CalendarDays, Database, User, TrendingUp, LogOut, BookOpen, ShoppingCart, ChefHat } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import PatientOnboarding from './PatientOnboarding';
 import PatientDashboard from './PatientDashboard';
@@ -10,12 +10,14 @@ import PatientProfile from './PatientProfile';
 import PatientProgress from './PatientProgress';
 import PatientFoodDiary from './PatientFoodDiary';
 import PatientShoppingList from './PatientShoppingList';
+import PatientRecipes from './PatientRecipes';
 
 const navItems = [
   { to: '/patient',                icon: LayoutDashboard, label: 'Dashboard'      },
   { to: '/patient/diary',          icon: BookOpen,        label: 'Diario'         },
   { to: '/patient/meal-planner',   icon: CalendarDays,    label: 'Piano Pasti'    },
   { to: '/patient/shopping-list',  icon: ShoppingCart,    label: 'Lista Spesa'    },
+  { to: '/patient/recipes',        icon: ChefHat,         label: 'Ricette'        },
   { to: '/patient/foods',          icon: Database,        label: 'Alimenti'       },
   { to: '/patient/profile',        icon: User,            label: 'Profilo'        },
   { to: '/patient/progress',       icon: TrendingUp,      label: 'Progressi'      },
@@ -105,6 +107,7 @@ export default function PatientApp() {
           <Route path="/patient/diary"          element={<PatientFoodDiary   patientId={patientId} profile={profile} />} />
           <Route path="/patient/meal-planner"   element={<PatientMealPlanner patientId={patientId} />} />
           <Route path="/patient/shopping-list"  element={<PatientShoppingList patientId={patientId} />} />
+          <Route path="/patient/recipes"        element={<PatientRecipes     patientId={patientId} />} />
           <Route path="/patient/foods"          element={<PatientFoodDatabase />} />
           <Route path="/patient/profile"        element={<PatientProfile     patientId={patientId} profile={profile} onUpdate={setProfile} />} />
           <Route path="/patient/progress"       element={<PatientProgress    patientId={patientId} profile={profile} />} />

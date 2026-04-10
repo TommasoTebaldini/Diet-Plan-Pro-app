@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { foods } from '../../data/foods';
-import { Droplets, Flame, TrendingUp, UtensilsCrossed, Scale, Activity } from 'lucide-react';
+import { Droplets, Flame, TrendingUp, UtensilsCrossed, Scale, Activity, Target } from 'lucide-react';
 
 const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 
@@ -64,9 +64,11 @@ function getGreeting() {
 export default function PatientDashboard({ patientId, profile }) {
   const mealPlanKey = `diet-patient-${patientId}-meal-plan`;
   const waterKey    = `diet-patient-${patientId}-water`;
+  const diaryKey    = `diet-patient-${patientId}-diary`;
 
   const [mealPlan] = useState(() => JSON.parse(localStorage.getItem(mealPlanKey) || '{}'));
   const [water, setWaterState] = useState(() => JSON.parse(localStorage.getItem(waterKey) || '0'));
+  const [diary]    = useState(() => JSON.parse(localStorage.getItem(diaryKey) || '{}'));
 
   const setWater = (val) => {
     setWaterState(val);
@@ -96,6 +98,30 @@ export default function PatientDashboard({ patientId, profile }) {
   const age = profile?.birthDate
     ? Math.floor((Date.now() - new Date(profile.birthDate).getTime()) / (1000 * 60 * 60 * 24 * 365.25))
     : null;
+
+  // 7-day diary history for mini-chart
+  const SLOTS = ['breakfast', 'lunch', 'dinner', 'snacks'];
+  const toDateKey = (d) => d.toISOString().split('T')[0];
+  const weekHistory = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date();
+    d.setDate(d.getDate() - (6 - i));
+    const key     = toDateKey(d);
+    const entries = SLOTS.flatMap(s => (diary[key]?.[s] || []));
+    const kcal    = Math.round(calcNutrition(entries).cal);
+    return { kcal, label: d.toLocaleDateString('it-IT', { weekday: 'short' }), isToday: i === 6 };
+  });
+  const maxKcal = Math.max(...weekHistory.map(d => d.kcal), calorieTarget, 1);
+
+  // Diary streak (consecutive days with at least 1 entry)
+  let streak = 0;
+  for (let i = 0; ; i++) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const key     = toDateKey(d);
+    const entries = SLOTS.flatMap(s => (diary[key]?.[s] || []));
+    if (entries.length > 0) streak++;
+    else break;
+  }
 
   const mealSlots = ['breakfast', 'lunch', 'dinner', 'snacks'];
   const mealLabels = { breakfast: 'Colazione', lunch: 'Pranzo', dinner: 'Cena', snacks: 'Spuntini' };
@@ -153,6 +179,17 @@ export default function PatientDashboard({ patientId, profile }) {
             <p className="font-bold text-gray-800">{calorieTarget} kcal</p>
           </div>
         </div>
+        {streak > 0 && (
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex items-center gap-3">
+            <div className="w-10 h-10 bg-yellow-100 rounded-xl flex items-center justify-center">
+              <Target size={18} className="text-yellow-500" />
+            </div>
+            <div>
+              <p className="text-xs text-gray-500">Serie diario</p>
+              <p className="font-bold text-gray-800">{streak} 🔥</p>
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
@@ -204,6 +241,36 @@ export default function PatientDashboard({ patientId, profile }) {
           </div>
           <p className="text-center text-sm text-gray-600">{water} / 8 bicchieri ({water * 250}ml)</p>
           {water >= 8 && <p className="text-center text-xs text-emerald-500 font-medium mt-1">🎉 Obiettivo raggiunto!</p>}
+        </div>
+      </div>
+
+      {/* Weekly calorie chart */}
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
+        <h3 className="font-semibold text-gray-700 mb-4 flex items-center gap-2">
+          <TrendingUp size={18} className="text-emerald-500" /> Calorie Diario – Settimana Corrente
+        </h3>
+        <div className="flex items-end gap-2 h-24">
+          {weekHistory.map((d, i) => {
+            const barH = d.kcal > 0 ? Math.round((d.kcal / maxKcal) * 80) + 4 : 4;
+            return (
+              <div key={i} className="flex-1 flex flex-col items-center gap-1">
+                <span className="text-xs text-gray-500">{d.kcal > 0 ? d.kcal : ''}</span>
+                <div
+                  className={`w-full rounded-t-lg ${
+                    d.isToday
+                      ? 'bg-emerald-500'
+                      : d.kcal > calorieTarget
+                      ? 'bg-orange-300'
+                      : d.kcal > 0
+                      ? 'bg-emerald-200'
+                      : 'bg-gray-100'
+                  }`}
+                  style={{ height: `${barH}px` }}
+                />
+                <span className="text-xs text-gray-400 capitalize">{d.label}</span>
+              </div>
+            );
+          })}
         </div>
       </div>
 
