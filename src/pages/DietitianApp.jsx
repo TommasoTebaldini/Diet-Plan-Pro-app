@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Routes, Route, NavLink, Navigate } from 'react-router-dom';
 import {
   ClipboardList, FolderOpen, Heart, Activity, Dumbbell, Brain,
@@ -5,6 +6,7 @@ import {
   BookOpen, UserCheck, BarChart2, Pill, Lightbulb, Zap,
   ClipboardCheck, Microscope, LogOut, Users,
   Bot, Calendar, GraduationCap, Database as DatabaseIcon, ChefHat,
+  Menu, X,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import PatientManager from './admin/PatientManager';
@@ -83,15 +85,10 @@ const NAV_SECTIONS = [
   },
 ];
 
-// ─── Sidebar ─────────────────────────────────────────────────────────────────
-function Sidebar() {
-  const { logout } = useAuth();
-
+// ─── Sidebar content (shared between desktop and mobile drawer) ──────────────
+function SidebarContent({ onNavClick, logout }) {
   return (
-    <aside
-      className="flex flex-col flex-shrink-0 overflow-y-auto"
-      style={{ width: 200, background: '#1B2838', minHeight: '100vh' }}
-    >
+    <>
       {/* Logo */}
       <div className="px-5 pt-6 pb-4">
         <div className="text-white font-extrabold text-xl leading-tight tracking-tight">
@@ -103,7 +100,7 @@ function Sidebar() {
       <div className="border-t border-white/10 mx-3 mb-2" />
 
       {/* Nav sections */}
-      <nav className="flex-1 px-2 pb-4">
+      <nav className="flex-1 px-2 pb-4 overflow-y-auto">
         {NAV_SECTIONS.map(section => (
           <div key={section.label} className="mb-2">
             <p className="px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-gray-500">
@@ -113,6 +110,7 @@ function Sidebar() {
               <NavLink
                 key={to}
                 to={to}
+                onClick={onNavClick}
                 className={({ isActive }) =>
                   `flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-all mb-0.5 ${
                     isActive
@@ -139,18 +137,65 @@ function Sidebar() {
           Esci
         </button>
       </div>
-    </aside>
+    </>
   );
 }
 
 // ─── DietitianApp ─────────────────────────────────────────────────────────────
 export default function DietitianApp() {
+  const { logout } = useAuth();
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
   return (
     <div className="flex h-screen overflow-hidden bg-gray-50">
-      <Sidebar />
+      {/* Desktop sidebar */}
+      <aside
+        className="hidden md:flex flex-col flex-shrink-0 overflow-y-auto"
+        style={{ width: 200, background: '#1B2838', minHeight: '100vh' }}
+      >
+        <SidebarContent onNavClick={undefined} logout={logout} />
+      </aside>
+
+      {/* Mobile drawer overlay */}
+      {drawerOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/50 md:hidden"
+          onClick={() => setDrawerOpen(false)}
+        />
+      )}
+
+      {/* Mobile drawer */}
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 flex flex-col w-64 transition-transform duration-300 md:hidden ${
+          drawerOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+        style={{ background: '#1B2838' }}
+      >
+        {/* Close button */}
+        <button
+          onClick={() => setDrawerOpen(false)}
+          className="absolute top-3 right-3 text-gray-400 hover:text-white p-1"
+          aria-label="Chiudi menu"
+        >
+          <X size={20} />
+        </button>
+        <SidebarContent onNavClick={() => setDrawerOpen(false)} logout={logout} />
+      </aside>
 
       {/* Main content */}
-      <main className="flex-1 overflow-auto flex flex-col">
+      <main className="flex-1 overflow-auto flex flex-col min-w-0">
+        {/* Mobile top bar */}
+        <div className="flex items-center gap-3 px-4 py-3 bg-white border-b border-gray-200 md:hidden flex-shrink-0">
+          <button
+            onClick={() => setDrawerOpen(true)}
+            className="p-1.5 rounded-lg text-gray-600 hover:bg-gray-100"
+            aria-label="Apri menu"
+          >
+            <Menu size={22} />
+          </button>
+          <span className="font-bold text-gray-800 text-base">DietPlan Pro</span>
+        </div>
+
         <Routes>
           <Route index element={<Navigate to="/dietitian/piano-alimentare" replace />} />
           <Route path="piano-alimentare"        element={<PianoAlimentare />} />
