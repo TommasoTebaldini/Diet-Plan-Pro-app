@@ -1,7 +1,7 @@
 const { app, BrowserWindow } = require('electron');
 const path = require('path');
 
-const isDev = process.env.NODE_ENV === 'development';
+const ONLINE_URL = 'https://nutri-plan-pro-cxee.vercel.app/';
 
 function createWindow() {
   const win = new BrowserWindow({
@@ -19,11 +19,7 @@ function createWindow() {
     title: 'Diet Plan Pro',
   });
 
-  if (isDev) {
-    win.loadURL('http://localhost:5173');
-  } else {
-    win.loadFile(path.join(__dirname, '../dist/index.html'));
-  }
+  win.loadURL(ONLINE_URL);
 }
 
 app.whenReady().then(() => {
