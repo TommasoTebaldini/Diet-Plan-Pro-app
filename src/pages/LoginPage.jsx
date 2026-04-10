@@ -16,8 +16,8 @@ export default function LoginPage() {
     setLoading(true);
     try {
       if (tab === 'dietitian') {
-        const ok = await loginDietitian(password);
-        if (!ok) setError('Password errata.');
+        const ok = await loginDietitian(username, password);
+        if (!ok) setError('Credenziali non corrette.');
       } else {
         const ok = await loginPatient(username, password);
         if (!ok) setError('Credenziali non corrette. Contatta il tuo dietista.');
@@ -43,7 +43,7 @@ export default function LoginPage() {
           {/* Tab switcher */}
           <div className="grid grid-cols-2 border-b border-gray-100">
             <button
-              onClick={() => { setTab('patient'); setError(''); }}
+              onClick={() => { setTab('patient'); setUsername(''); setError(''); }}
               className={`py-4 flex items-center justify-center gap-2 text-sm font-semibold transition-all ${
                 tab === 'patient'
                   ? 'bg-emerald-50 text-emerald-600 border-b-2 border-emerald-500'
@@ -54,7 +54,7 @@ export default function LoginPage() {
               Paziente
             </button>
             <button
-              onClick={() => { setTab('dietitian'); setError(''); }}
+              onClick={() => { setTab('dietitian'); setUsername(''); setError(''); }}
               className={`py-4 flex items-center justify-center gap-2 text-sm font-semibold transition-all ${
                 tab === 'dietitian'
                   ? 'bg-emerald-50 text-emerald-600 border-b-2 border-emerald-500'
@@ -84,6 +84,23 @@ export default function LoginPage() {
               </div>
             )}
 
+            {tab === 'dietitian' && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <div className="relative">
+                  <User size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                  <input
+                    type="email"
+                    value={username}
+                    onChange={e => setUsername(e.target.value)}
+                    placeholder="La tua email"
+                    required
+                    className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-300"
+                  />
+                </div>
+              </div>
+            )}
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
               <div className="relative">
@@ -92,7 +109,7 @@ export default function LoginPage() {
                   type="password"
                   value={password}
                   onChange={e => setPassword(e.target.value)}
-                  placeholder={tab === 'dietitian' ? 'Password amministratore' : 'La tua password'}
+                  placeholder="La tua password"
                   required
                   className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-300"
                 />
