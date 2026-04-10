@@ -259,6 +259,16 @@ function PastoSection({ pasto, onUpdate, onRemove, onOpenRename, onOpenAlt }) {
 
       {!pasto.collapsed && (
         <>
+          {/* Micronutrienti pills */}
+          <div className="flex flex-wrap items-center gap-1.5 px-4 py-2 bg-white border-b border-gray-100">
+            <span className="text-xs text-gray-500 font-medium mr-1">Micronutrienti:</span>
+            {['Calcio (mg)', 'Ferro (mg)', 'Magnesio (mg)', 'Potassio (mg)', 'Sodio (mg)', 'Zinco (mg)', 'Fosforo (mg)', 'Selenio (μg)', 'Col. (mg)'].map(m => (
+              <span key={m} className="border border-gray-200 rounded-full px-2 py-0.5 text-xs text-gray-600 bg-white">
+                {m}
+              </span>
+            ))}
+          </div>
+
           {/* Food table */}
           <div className="overflow-x-auto">
             <table className="w-full min-w-[700px] text-xs">
@@ -363,18 +373,16 @@ function PastoSection({ pasto, onUpdate, onRemove, onOpenRename, onOpenAlt }) {
                 })}
 
                 {/* Σ Totals row */}
-                <tr className="bg-gray-50">
-                  <td className="px-3 py-2 font-bold text-xs uppercase tracking-wide text-gray-700">
+                <tr style={{ background: '#134e4a' }}>
+                  <td className="px-3 py-2 font-bold text-xs uppercase tracking-wide text-white">
                     Σ {pasto.nome.toUpperCase()}
                   </td>
-                  <td className="px-2 py-2 text-center text-xs font-medium text-gray-500">—</td>
-                  <td className="px-2 py-2 text-center text-xs font-bold text-gray-700">{totals.kcal || 0}</td>
-                  <td className="px-2 py-2 text-center text-xs font-bold text-gray-700">{totals.prot || 0}</td>
-                  <td className="px-2 py-2 text-center text-xs font-bold text-gray-700">{totals.fatSat || 0}</td>
-                  <td className="px-2 py-2 text-center text-xs font-bold text-gray-700">{totals.fat || 0}</td>
-                  <td className="px-2 py-2 text-center text-xs font-bold text-gray-700">{totals.sugar || 0}</td>
-                  <td className="px-2 py-2 text-center text-xs font-bold text-gray-700">{totals.carbs || 0}</td>
-                  <td className="px-2 py-2 text-center text-xs font-bold text-gray-700">{totals.fiber || 0}</td>
+                  <td className="px-2 py-2 text-center text-xs font-medium text-white/70">—</td>
+                  {[totals.kcal, totals.prot, totals.fatSat, totals.fat, totals.sugar, totals.carbs, totals.fiber].map((v, i) => (
+                    <td key={i} className="px-2 py-2 text-center">
+                      <span className="bg-teal-600 text-white text-xs font-bold rounded w-8 h-5 inline-flex items-center justify-center">{v || 0}</span>
+                    </td>
+                  ))}
                   <td className="px-2 py-2"></td>
                   <td className="px-2 py-2"></td>
                 </tr>
@@ -382,15 +390,19 @@ function PastoSection({ pasto, onUpdate, onRemove, onOpenRename, onOpenAlt }) {
             </table>
           </div>
 
-          {/* Summary + Notes */}
-          <div className="px-4 py-2 flex items-center justify-between gap-4 bg-white border-t border-gray-100">
-            <span className="text-xs text-gray-500">
-              {totals.kcal} kcal · P:{totals.prot}g · C:{totals.carbs}g · G:{totals.fat}g · F:{totals.fiber}g
-            </span>
-          </div>
-
-          {/* Notes */}
-          <div className="px-4 pb-3 bg-white">
+          {/* Summary + Notes + Add row */}
+          <div className="px-4 pt-2 pb-1 bg-white border-t border-gray-100">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs text-gray-500">
+                {totals.kcal} kcal · P:{totals.prot}g · C:{totals.carbs}g · G:{totals.fat}g
+              </span>
+              <button
+                onClick={addRiga}
+                className="flex items-center gap-1.5 px-4 py-1.5 text-xs font-semibold text-white rounded-lg transition-colors bg-emerald-600 hover:bg-emerald-700"
+              >
+                <Plus size={12} /> Riga
+              </button>
+            </div>
             <textarea
               value={pasto.note}
               onChange={(e) => onUpdate({ ...pasto, note: e.target.value })}
@@ -398,16 +410,6 @@ function PastoSection({ pasto, onUpdate, onRemove, onOpenRename, onOpenAlt }) {
               rows={2}
               className="w-full text-xs px-3 py-2 border border-dashed border-amber-200 rounded-lg bg-amber-50/40 focus:outline-none focus:ring-1 focus:ring-amber-300 placeholder-gray-400 resize-none"
             />
-          </div>
-
-          {/* + Riga button */}
-          <div className="px-4 pb-3 flex justify-end">
-            <button
-              onClick={addRiga}
-              className="flex items-center gap-1.5 px-4 py-1.5 text-xs font-semibold text-white rounded-lg transition-colors bg-emerald-600 hover:bg-emerald-700"
-            >
-              <Plus size={12} /> Riga
-            </button>
           </div>
         </>
       )}
