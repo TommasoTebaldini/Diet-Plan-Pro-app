@@ -45,3 +45,7 @@ Outputs are placed in the `release/` folder:
 - **Windows** → `.exe` installer (NSIS)
 - **macOS** → `.dmg`
 - **Linux** → `.AppImage`
+
+> **Windows note:** If the build fails with *"Cannot create symbolic link"*, you need either:
+> - **Windows Developer Mode** enabled (Settings → System → For developers → Developer Mode), or
+> - the command prompt/terminal **run as Administrator**.
